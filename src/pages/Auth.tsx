@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
-import { Mail, Lock, User } from 'lucide-react';
+import { Mail, Lock, User, AlertTriangle } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Auth = () => {
+  const navigate = useNavigate();
+  const { signIn, signUp, user } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -11,41 +17,65 @@ const Auth = () => {
     bio: ''
   });
 
+  // Redirect if already logged in
+  React.useEffect(() => {
+    if (user) {
+      navigate('/profile');
+    }
+  }, [user, navigate]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData(prevData => ({
       ...prevData,
       [name]: value
     }));
+    // Clear error when user starts typing
+    if (error) setError(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+    setError(null);
     
-    if (isLogin) {
-      // Handle login logic here
-      console.log('Login submitted', formData.email, formData.password);
-    } else {
-      // Handle signup logic here
-      console.log('Signup submitted', formData);
-      
-      // Validate password confirmation
-      if (formData.password !== formData.confirmPassword) {
-        alert('Passwords do not match!');
-        return;
+    try {
+      if (isLogin) {
+        // Handle login logic
+        const { error } = await signIn(formData.email, formData.password);
+        if (error) throw error;
+        // Successful login will trigger the useEffect to redirect
+      } else {
+        // Handle signup logic
+        // Validate password confirmation
+        if (formData.password !== formData.confirmPassword) {
+          throw new Error('Passwords do not match!');
+        }
+        
+        // Sign up with Supabase
+        const { error } = await signUp(formData.email, formData.password, {
+          full_name: formData.fullName,
+          bio: formData.bio
+        });
+        
+        if (error) throw error;
+        
+        // If signup successful, show a message and redirect to login
+        alert('Account created successfully! Please check your email for confirmation.');
+        // Reset form and go back to login
+        setFormData({
+          email: '',
+          password: '',
+          confirmPassword: '',
+          fullName: '',
+          bio: ''
+        });
+        setIsLogin(true);
       }
-      
-      // Here you would typically send the data to your backend API
-      alert('Account created successfully! You can now log in.');
-      // Reset form and go back to login
-      setFormData({
-        email: '',
-        password: '',
-        confirmPassword: '',
-        fullName: '',
-        bio: ''
-      });
-      setIsLogin(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An unexpected error occurred');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,6 +99,7 @@ const Auth = () => {
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             placeholder="you@example.com"
             required
+            disabled={loading}
           />
         </div>
       </div>
@@ -90,15 +121,17 @@ const Auth = () => {
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             placeholder="••••••••"
             required
+            disabled={loading}
           />
         </div>
       </div>
 
       <button
         type="submit"
-        className="w-full bg-primary text-secondary py-2 px-4 rounded-md font-medium hover:bg-opacity-90 transition-colors"
+        className="w-full bg-primary text-secondary py-2 px-4 rounded-md font-medium hover:bg-opacity-90 transition-colors disabled:opacity-70"
+        disabled={loading}
       >
-        Sign In
+        {loading ? 'Signing In...' : 'Sign In'}
       </button>
 
       <div className="text-center mt-4">
@@ -106,6 +139,7 @@ const Auth = () => {
           type="button"
           onClick={() => setIsLogin(false)}
           className="text-primary hover:text-opacity-80 transition-colors text-sm"
+          disabled={loading}
         >
           Need an account? Sign up
         </button>
@@ -133,6 +167,7 @@ const Auth = () => {
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             placeholder="you@example.com"
             required
+            disabled={loading}
           />
         </div>
       </div>
@@ -154,6 +189,7 @@ const Auth = () => {
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             placeholder="John Doe"
             required
+            disabled={loading}
           />
         </div>
       </div>
@@ -175,6 +211,7 @@ const Auth = () => {
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             placeholder="••••••••"
             required
+            disabled={loading}
           />
         </div>
       </div>
@@ -196,6 +233,7 @@ const Auth = () => {
             className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
             placeholder="••••••••"
             required
+            disabled={loading}
           />
         </div>
       </div>
@@ -212,14 +250,16 @@ const Auth = () => {
           rows={3}
           className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
           placeholder="Tell us about yourself..."
+          disabled={loading}
         />
       </div>
 
       <button
         type="submit"
-        className="w-full bg-primary text-secondary py-2 px-4 rounded-md font-medium hover:bg-opacity-90 transition-colors"
+        className="w-full bg-primary text-secondary py-2 px-4 rounded-md font-medium hover:bg-opacity-90 transition-colors disabled:opacity-70"
+        disabled={loading}
       >
-        Create Account
+        {loading ? 'Creating Account...' : 'Create Account'}
       </button>
 
       <div className="text-center mt-4">
@@ -227,6 +267,7 @@ const Auth = () => {
           type="button"
           onClick={() => setIsLogin(true)}
           className="text-primary hover:text-opacity-80 transition-colors text-sm"
+          disabled={loading}
         >
           Already have an account? Sign in
         </button>
@@ -248,6 +289,13 @@ const Auth = () => {
       </div>
 
       <div className="bg-white rounded-lg shadow-lg p-8">
+        {error && (
+          <div className="mb-4 bg-red-50 text-red-700 p-3 rounded-md flex items-start">
+            <AlertTriangle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+        
         {isLogin ? renderLoginForm() : renderSignupForm()}
       </div>
     </div>

@@ -1,8 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Bell, BookOpen, User, Users } from 'lucide-react';
+import { Calendar, Bell, BookOpen, User, Users, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 const Navbar = () => {
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <nav className="bg-secondary text-white">
       <div className="container mx-auto px-4">
@@ -32,16 +39,28 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Link to="/profile" className="flex items-center space-x-1 hover:text-primary transition-colors">
-              <User className="h-5 w-5" />
-              <span className="hidden md:inline">Profile</span>
-            </Link>
-            <Link 
-              to="/auth" 
-              className="bg-primary text-secondary px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors"
-            >
-              Sign In
-            </Link>
+            {user ? (
+              <>
+                <Link to="/profile" className="flex items-center space-x-1 hover:text-primary transition-colors">
+                  <User className="h-5 w-5" />
+                  <span className="hidden md:inline">Profile</span>
+                </Link>
+                <button 
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-1 hover:text-primary transition-colors"
+                >
+                  <LogOut className="h-5 w-5" />
+                  <span className="hidden md:inline">Sign Out</span>
+                </button>
+              </>
+            ) : (
+              <Link 
+                to="/auth" 
+                className="bg-primary text-secondary px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors"
+              >
+                Sign In
+              </Link>
+            )}
           </div>
         </div>
       </div>
