@@ -5,6 +5,9 @@ import Home from './pages/Home';
 import Calendar from './pages/Calendar';
 import Announcements from './pages/Announcements';
 import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
+import CreateBlogPost from './pages/CreateBlogPost';
+import EditBlogPost from './pages/EditBlogPost';
 import Profile from './pages/Profile';
 import Mentors from './pages/Mentors';
 import Auth from './pages/Auth';
@@ -22,7 +25,13 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/announcements" element={<Announcements />} />
+              
+              {/* Blog routes */}
               <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:id" element={<BlogPost />} />
+              <Route path="/blog/new" element={<CreateBlogPost />} />
+              <Route path="/blog/edit/:id" element={<EditBlogPost />} />
+              
               <Route 
                 path="/profile" 
                 element={
