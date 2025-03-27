@@ -11,11 +11,13 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-secondary text-white">
-      <div className="container mx-auto px-4">
+    <nav className="bg-gray-900 text-white shadow-lg border-b border-gray-800">
+      <div className="mx-auto w-full max-w-[80%] px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <Users className="h-8 w-8 text-primary" />
+            <div className="bg-gradient-to-br from-primary to-yellow-500 p-2 rounded-full shadow-md">
+              <Users className="h-6 w-6 text-gray-900" />
+            </div>
             <span className="text-xl font-bold">TechCombinator</span>
           </Link>
           
@@ -56,7 +58,7 @@ const Navbar = () => {
             ) : (
               <Link 
                 to="/auth" 
-                className="bg-primary text-secondary px-4 py-2 rounded-md hover:bg-opacity-90 transition-colors"
+                className="bg-gradient-to-r from-primary to-yellow-500 text-gray-900 px-4 py-2 rounded-md font-medium hover:opacity-90 transition-colors shadow-md"
               >
                 Sign In
               </Link>

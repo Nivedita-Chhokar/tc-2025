@@ -5,6 +5,7 @@ import { blogService } from '../services/blogService';
 import { BlogPost as BlogPostType } from '../types';
 import { useAuth } from '../context/AuthContext';
 import { format } from 'date-fns';
+import ConfirmDialog from '../components/ConfirmDialog';
 
 const BlogPost = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,6 +15,7 @@ const BlogPost = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -38,14 +40,15 @@ const BlogPost = () => {
     fetchPost();
   }, [id]);
 
-  const handleDelete = async () => {
-    if (!post || !window.confirm('Are you sure you want to delete this post?')) {
-      return;
-    }
-
+  const handleConfirmDelete = async () => {
+    if (!id) return;
+    
     setIsDeleting(true);
+    setShowDeleteDialog(false);
+    
     try {
-      await blogService.deletePost(post.id);
+      await blogService.deletePost(id);
+      // Redirect to blog list after successful deletion
       navigate('/blog');
     } catch (err) {
       setError('Error deleting post. Please try again later.');
@@ -71,7 +74,7 @@ const BlogPost = () => {
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Blog
         </Link>
-        <div className="bg-red-50 text-red-700 p-4 rounded-md">
+        <div className="bg-red-900 bg-opacity-50 text-red-200 p-4 rounded-md border-l-4 border-red-500 shadow">
           {error || 'Blog post not found'}
         </div>
       </div>
@@ -80,13 +83,25 @@ const BlogPost = () => {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <Link to="/blog" className="flex items-center text-primary hover:underline">
-        <ArrowLeft className="h-4 w-4 mr-2" />
-        Back to Blog
+      {/* Delete Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={showDeleteDialog}
+        title="Delete Post"
+        message={`Are you sure you want to delete "${post.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setShowDeleteDialog(false)}
+        variant="danger"
+      />
+
+      <Link to="/blog" className="flex items-center text-primary hover:underline group">
+        <ArrowLeft className="h-4 w-4 mr-2 group-hover:-translate-x-1 transition-transform" />
+        <span>Back to Blog</span>
       </Link>
 
       {post.image_url && (
-        <div className="w-full h-64 md:h-96 overflow-hidden rounded-lg">
+        <div className="w-full h-64 md:h-96 overflow-hidden rounded-xl shadow-lg">
           <img 
             src={post.image_url} 
             alt={post.title} 
@@ -95,22 +110,27 @@ const BlogPost = () => {
         </div>
       )}
 
-      <div className="bg-white rounded-lg shadow-lg p-6 md:p-8">
+      <div className="bg-gray-900 bg-opacity-50 rounded-xl shadow-lg p-6 md:p-8 border border-gray-800">
         <div className="flex justify-between items-start mb-6">
-          <h1 className="text-3xl font-bold">{post.title}</h1>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-100">{post.title}</h1>
+            <div className="h-1 w-16 bg-gradient-to-r from-primary to-yellow-500 rounded-full mt-2"></div>
+          </div>
           
           {isAuthor && (
             <div className="flex space-x-2">
               <Link 
                 to={`/blog/edit/${post.id}`}
-                className="p-2 text-gray-600 hover:text-primary transition-colors"
+                className="p-2 bg-gray-800 rounded-full text-gray-300 hover:text-primary hover:bg-gray-700 transition-colors"
+                title="Edit post"
               >
                 <Edit className="h-5 w-5" />
               </Link>
               <button 
-                onClick={handleDelete}
+                onClick={() => setShowDeleteDialog(true)}
                 disabled={isDeleting}
-                className="p-2 text-gray-600 hover:text-red-600 transition-colors disabled:opacity-50"
+                className="p-2 bg-gray-800 rounded-full text-gray-300 hover:text-red-400 hover:bg-gray-700 transition-colors disabled:opacity-50"
+                title="Delete post"
               >
                 <Trash2 className="h-5 w-5" />
               </button>
@@ -118,10 +138,10 @@ const BlogPost = () => {
           )}
         </div>
 
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-6">
+        <div className="flex items-center justify-between text-sm text-gray-400 mb-6 border-b border-gray-700 pb-4">
           <div className="flex items-center">
             <User className="h-4 w-4 mr-1" />
-            <span>{post.author_name || 'Anonymous'}</span>
+            <span className="font-medium">{post.author_name || 'Anonymous'}</span>
           </div>
           <div className="flex items-center">
             <Clock className="h-4 w-4 mr-1" />
@@ -129,10 +149,10 @@ const BlogPost = () => {
           </div>
         </div>
 
-        <div className="prose max-w-none">
+        <article className="prose max-w-none prose-invert prose-headings:text-gray-200 prose-headings:font-bold prose-a:text-primary prose-p:text-gray-300">
           {/* Render content as HTML - Note: Ensure content is sanitized on the server */}
           <div dangerouslySetInnerHTML={{ __html: post.content }} />
-        </div>
+        </article>
       </div>
     </div>
   );

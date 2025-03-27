@@ -69,14 +69,14 @@ const BlogForm: React.FC<BlogFormProps> = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded-md flex items-start">
+        <div className="bg-red-900 bg-opacity-50 text-red-200 p-4 rounded-md flex items-start border-l-4 border-red-500">
           <AlertTriangle className="h-5 w-5 mr-2 mt-0.5 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       <div className="space-y-2">
-        <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="title" className="block text-sm font-medium text-gray-300">
           Title *
         </label>
         <input
@@ -85,7 +85,7 @@ const BlogForm: React.FC<BlogFormProps> = ({
           name="title"
           value={formData.title}
           onChange={handleChange}
-          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+          className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary text-gray-200"
           placeholder="Enter a title for your blog post"
           required
           disabled={isSubmitting}
@@ -93,7 +93,7 @@ const BlogForm: React.FC<BlogFormProps> = ({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="summary" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="summary" className="block text-sm font-medium text-gray-300">
           Summary
         </label>
         <textarea
@@ -102,7 +102,7 @@ const BlogForm: React.FC<BlogFormProps> = ({
           value={formData.summary}
           onChange={handleChange}
           rows={2}
-          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+          className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary text-gray-200"
           placeholder="Enter a brief summary (optional)"
           disabled={isSubmitting}
         />
@@ -112,7 +112,7 @@ const BlogForm: React.FC<BlogFormProps> = ({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="content" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="content" className="block text-sm font-medium text-gray-300">
           Content *
         </label>
         <textarea
@@ -121,7 +121,7 @@ const BlogForm: React.FC<BlogFormProps> = ({
           value={formData.content}
           onChange={handleChange}
           rows={12}
-          className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+          className="block w-full px-3 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary text-gray-200"
           placeholder="Write your blog post content here..."
           required
           disabled={isSubmitting}
@@ -132,12 +132,12 @@ const BlogForm: React.FC<BlogFormProps> = ({
       </div>
 
       <div className="space-y-2">
-        <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="image_url" className="block text-sm font-medium text-gray-300">
           Image URL
         </label>
         <div className="relative">
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Image className="h-5 w-5 text-gray-400" />
+            <Image className="h-5 w-5 text-gray-500" />
           </div>
           <input
             type="url"
@@ -145,7 +145,7 @@ const BlogForm: React.FC<BlogFormProps> = ({
             name="image_url"
             value={formData.image_url}
             onChange={handleChange}
-            className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary"
+            className="block w-full pl-10 pr-10 py-2 bg-gray-800 border border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary text-gray-200"
             placeholder="https://example.com/image.jpg"
             disabled={isSubmitting}
           />
@@ -156,7 +156,7 @@ const BlogForm: React.FC<BlogFormProps> = ({
               className="absolute inset-y-0 right-0 pr-3 flex items-center"
               disabled={isSubmitting}
             >
-              <X className="h-5 w-5 text-gray-400 hover:text-gray-500" />
+              <X className="h-5 w-5 text-gray-400 hover:text-gray-300" />
             </button>
           )}
         </div>
@@ -166,7 +166,7 @@ const BlogForm: React.FC<BlogFormProps> = ({
       </div>
 
       {formData.image_url && (
-        <div className="border border-gray-200 rounded-md overflow-hidden">
+        <div className="border border-gray-700 rounded-md overflow-hidden">
           <img 
             src={formData.image_url} 
             alt="Preview" 
@@ -189,17 +189,17 @@ const BlogForm: React.FC<BlogFormProps> = ({
             ...prev,
             published: e.target.checked
           }))}
-          className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
+          className="h-4 w-4 text-primary focus:ring-primary border-gray-700 rounded"
           disabled={isSubmitting}
         />
-        <label htmlFor="published" className="ml-2 block text-sm text-gray-900">
+        <label htmlFor="published" className="ml-2 block text-sm text-gray-300">
           Publish immediately
         </label>
       </div>
 
       <button
         type="submit"
-        className="w-full md:w-auto bg-primary text-secondary px-6 py-3 rounded-md font-medium hover:bg-opacity-90 transition-colors disabled:opacity-70 flex items-center justify-center"
+        className="w-full md:w-auto bg-gradient-to-r from-primary to-yellow-500 text-secondary px-6 py-3 rounded-md font-medium hover:shadow-lg transition-all duration-300 disabled:opacity-70 flex items-center justify-center transform hover:-translate-y-1"
         disabled={isSubmitting}
       >
         {isSubmitting ? 'Saving...' : 

@@ -18,9 +18,10 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-black text-gray-100">
           <Navbar />
-          <main className="container mx-auto px-4 py-8">
+          {/* Main content container with max-width and centering */}
+          <main className="mx-auto w-full max-w-[80%] px-4 py-8">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/calendar" element={<Calendar />} />
