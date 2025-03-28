@@ -13,6 +13,13 @@ import Mentors from './pages/Mentors';
 import Auth from './pages/Auth';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import CoStart from './pages/CoStart';
+import CreateFounderProfile from './pages/CreateFounderProfile';
+import EditFounderProfile from './pages/EditFounderProfile';
+import FindCoFounders from './pages/FindCoFounders';
+import ViewFounderProfile from './pages/ViewFounderProfile';
+import MatchRequests from './pages/MatchRequests';
+import Matches from './pages/Matches';
 
 function App() {
   return (
@@ -43,6 +50,39 @@ function App() {
               />
               <Route path="/mentors" element={<Mentors />} />
               <Route path="/auth" element={<Auth />} />
+              {/* Co-Start routes */}
+              <Route 
+                path="/costart" 
+                element={
+                  <ProtectedRoute>
+                    <CoStart />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/costart/profile/create" 
+                element={<CreateFounderProfile />} 
+              />
+              <Route 
+                path="/costart/profile/edit" 
+                element={<EditFounderProfile />} 
+              />
+              <Route 
+                path="/costart/find" 
+                element={<FindCoFounders />} 
+              />
+              <Route 
+                path="/costart/profile/:id" 
+                element={<ViewFounderProfile />} 
+              />
+              <Route 
+                path="/costart/requests" 
+                element={<MatchRequests />} 
+              />
+              <Route 
+                path="/costart/matches" 
+                element={<Matches />} 
+              />
             </Routes>
           </main>
         </div>

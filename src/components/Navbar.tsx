@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, Bell, BookOpen, User, Users, LogOut } from 'lucide-react';
+import { Calendar, Bell, BookOpen, User, Users, LogOut, } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
@@ -37,6 +38,10 @@ const Navbar = () => {
             <Link to="/mentors" className="flex items-center space-x-1 hover:text-primary transition-colors">
               <Users className="h-5 w-5" />
               <span>Mentors</span>
+            </Link>
+            <Link to="/costart" className="flex items-center space-x-1 hover:text-primary transition-colors">
+              <Users className="h-5 w-5" />
+              <span>Co-Start</span>
             </Link>
           </div>
 
